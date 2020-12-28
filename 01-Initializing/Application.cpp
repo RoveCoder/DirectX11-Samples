@@ -14,26 +14,38 @@ int Applicataion::Execute()
     if (!SDLInit())
         return -1;
 
-    // Initialise DirectX 11 renderer
-
+    // Initialise and create the DirectX 11 renderer
+    m_DxRenderer = std::make_unique<DX::Renderer>(m_SdlWindow);
+    m_DxRenderer->Create();
 
     // Starts the timer
     m_Timer.Start();
 
-    // Main loop
+    // Main application event loop
     SDL_Event e = {};
     while (e.type != SDL_QUIT)
     {
         m_Timer.Tick();
         if (SDL_PollEvent(&e))
         {
-
+            if (e.type == SDL_WINDOWEVENT)
+            {
+                // On resize event, resize the DxRender device
+                if (e.window.event == SDL_WINDOWEVENT_RESIZED)
+                {
+                    m_DxRenderer->Resize(e.window.data1, e.window.data2);
+                }
+            }
         }
         else
         {
             CalculateFramesPerSecond();
 
+            // Clear the buffers
+            m_DxRenderer->Clear();
 
+            // Display the rendered scene
+            m_DxRenderer->Present();
         }
     }
 
@@ -50,7 +62,7 @@ bool Applicataion::SDLInit()
         return false;
     }
 
-    // SDL Window
+    // Create SDL Window
     auto window_flags = SDL_WINDOW_RESIZABLE | SDL_WINDOW_MAXIMIZED;
     m_SdlWindow = SDL_CreateWindow("DirectX - Initializing", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 800, 600, window_flags);
     if (m_SdlWindow == nullptr)

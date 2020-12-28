@@ -1,7 +1,9 @@
 #pragma once
 
+#include <memory>
 #include <SDL_video.h>
 #include "Timer.h"
+#include "DxRenderer.h"
 
 class Applicataion
 {
@@ -20,4 +22,7 @@ private:
 	// Timer
 	Timer m_Timer;
 	void CalculateFramesPerSecond();
+
+	// Direct3D 11 renderer
+	std::unique_ptr<DX::Renderer> m_DxRenderer = nullptr;
 };
