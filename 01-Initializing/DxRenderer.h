@@ -1,7 +1,8 @@
 #pragma once
 
-#include <SDL_video.h>
 #include <exception>
+#include <SDL_video.h>
+#include <d3d11_1.h>
 
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
@@ -9,8 +10,6 @@
 // This include is requires for using DirectX smart pointers (ComPtr)
 #include <wrl\client.h>
 using Microsoft::WRL::ComPtr;
-
-#include <d3d11.h>
 
 namespace DX
 {
@@ -57,6 +56,7 @@ namespace DX
 
 		// Swapchain
 		ComPtr<IDXGISwapChain> m_d3dSwapChain = nullptr;
+		ComPtr<IDXGISwapChain1> m_d3dSwapChain1 = nullptr;
 		void CreateSwapChain(int width, int height);
 
 		// Render target and depth stencil view

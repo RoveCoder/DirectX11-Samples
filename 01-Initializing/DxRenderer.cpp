@@ -58,14 +58,29 @@ void DX::Renderer::Clear()
 
 void DX::Renderer::Present()
 {
-	// Present the back buffer to the screen with V-sync disabled
-	DX::Check(m_d3dSwapChain->Present(0, 0));
+	// Check if we support IDXGISwapChain1
+	if (m_d3dSwapChain1 != nullptr)
+	{
+		// Use IDXGISwapChain1::Present1 for presenting instead
+		// This is a requirement for using variable refresh rate displays
+		DXGI_PRESENT_PARAMETERS presentParameters = {};
+		DX::Check(m_d3dSwapChain1->Present1(0, 0, &presentParameters));
+	}
+	else
+	{
+		DX::Check(m_d3dSwapChain->Present(0, 0));
+	}
 }
 
 void DX::Renderer::CreateDeviceAndContext()
 {
 	// Look for Direct3D 11 feature
-	D3D_FEATURE_LEVEL featureLevels[] = { D3D_FEATURE_LEVEL_11_0 };
+	D3D_FEATURE_LEVEL featureLevels[] =
+	{
+		D3D_FEATURE_LEVEL_11_1,
+		D3D_FEATURE_LEVEL_11_0
+	};
+
 	UINT numFeatureLevels = ARRAYSIZE(featureLevels);
 
 	// Add debug flag if in debug mode
@@ -76,13 +91,19 @@ void DX::Renderer::CreateDeviceAndContext()
 
 	// Create device and device context
 	D3D_FEATURE_LEVEL featureLevel;
-	DX::Check(D3D11CreateDevice(nullptr, D3D_DRIVER_TYPE_HARDWARE, nullptr, deviceFlag, featureLevels, numFeatureLevels, 
+	DX::Check(D3D11CreateDevice(nullptr, D3D_DRIVER_TYPE_HARDWARE, nullptr, deviceFlag, featureLevels, numFeatureLevels,
 		D3D11_SDK_VERSION, m_d3dDevice.ReleaseAndGetAddressOf(), &featureLevel, m_d3dDeviceContext.ReleaseAndGetAddressOf()));
 
-	// Check if Direct3D 11 is supported
-	if (featureLevel != D3D_FEATURE_LEVEL_11_0)
+	// Check if Direct3D 11.1 is supported, if not fall back to Direct3D 11
+	if (featureLevel != D3D_FEATURE_LEVEL_11_1)
 	{
-		SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error", "", nullptr);
+		SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error", "D3D_FEATURE_LEVEL_11_1 is not supported! Falling back to D3D_FEATURE_LEVEL_11_0", nullptr);
+	}
+
+	// Check if Direct3D 11 is supported
+	if (featureLevel != D3D_FEATURE_LEVEL_11_1)
+	{
+		SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error", "D3D_FEATURE_LEVEL_11_0 is not supported", nullptr);
 		throw std::exception();
 	}
 }
@@ -102,23 +123,48 @@ void DX::Renderer::CreateSwapChain(int width, int height)
 	ComPtr<IDXGIFactory> dxgiFactory = nullptr;
 	DX::Check(adapter->GetParent(__uuidof(IDXGIFactory), reinterpret_cast<void**>(dxgiFactory.GetAddressOf())));
 
-	// Describe the swapchain
-	DXGI_SWAP_CHAIN_DESC swapchain_desc = {};
-	swapchain_desc.BufferCount = 2;
-	swapchain_desc.BufferDesc.Width = width;
-	swapchain_desc.BufferDesc.Height = height;
-	swapchain_desc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-	swapchain_desc.BufferDesc.RefreshRate.Numerator = 60;
-	swapchain_desc.BufferDesc.RefreshRate.Denominator = 1;
-	swapchain_desc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-	swapchain_desc.OutputWindow = hwnd;
-	swapchain_desc.SampleDesc.Count = 1;
-	swapchain_desc.SampleDesc.Quality = 0;
-	swapchain_desc.Windowed = TRUE;
-	swapchain_desc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
+	// Query IDXGIFactory to try to get IDXGIFactory2
+	ComPtr<IDXGIFactory2> dxgiFactory2 = nullptr;
+	DX::Check(dxgiFactory.As(&dxgiFactory2));
 
-	// Creates the swapchain
-	DX::Check(dxgiFactory->CreateSwapChain(m_d3dDevice.Get(), &swapchain_desc, &m_d3dSwapChain));
+	// If we can support IDXGIFactory2 then use it to create the swap chain, otherwise fallback to IDXIFactory
+	if (dxgiFactory2 != nullptr)
+	{
+		// DirectX 11.1
+		DXGI_SWAP_CHAIN_DESC1 sd = {};
+		sd.Width = width;
+		sd.Height = height;
+		sd.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+		sd.SampleDesc.Count = 1;
+		sd.SampleDesc.Quality = 0;
+		sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+		sd.BufferCount = 2;
+		sd.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
+
+		// CreateSwapChainForHwnd is the prefered way of creating the swap chain
+		DX::Check(dxgiFactory2->CreateSwapChainForHwnd(m_d3dDevice.Get(), hwnd, &sd, nullptr, nullptr, &m_d3dSwapChain1));
+		DX::Check(m_d3dSwapChain1.As(&m_d3dSwapChain));
+	}
+	else
+	{
+		// Describe the swapchain
+		DXGI_SWAP_CHAIN_DESC swapchain_desc = {};
+		swapchain_desc.BufferCount = 2;
+		swapchain_desc.BufferDesc.Width = width;
+		swapchain_desc.BufferDesc.Height = height;
+		swapchain_desc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+		swapchain_desc.BufferDesc.RefreshRate.Numerator = 60;
+		swapchain_desc.BufferDesc.RefreshRate.Denominator = 1;
+		swapchain_desc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+		swapchain_desc.OutputWindow = hwnd;
+		swapchain_desc.SampleDesc.Count = 1;
+		swapchain_desc.SampleDesc.Quality = 0;
+		swapchain_desc.Windowed = TRUE;
+		swapchain_desc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
+
+		// Creates the swapchain
+		DX::Check(dxgiFactory->CreateSwapChain(m_d3dDevice.Get(), &swapchain_desc, &m_d3dSwapChain));
+	}
 }
 
 void DX::Renderer::CreateRenderTargetAndDepthStencilView(int width, int height)
