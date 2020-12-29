@@ -37,7 +37,7 @@ void DX::Renderer::Resize(int width, int height)
 	m_d3dRenderTargetView.ReleaseAndGetAddressOf();
 
 	// Resize the swapchain
-	DX::Check(m_d3dSwapChain->ResizeBuffers(2, width, height, DXGI_FORMAT_R8G8B8A8_UNORM, 0));
+	DX::Check(m_d3dSwapChain->ResizeBuffers(2, width, height, DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_SWAP_CHAIN_FLAG_ALLOW_TEARING));
 
 	// Creates a new render target and depth stencil view with the new window size
 	CreateRenderTargetAndDepthStencilView(width, height);
@@ -131,18 +131,19 @@ void DX::Renderer::CreateSwapChain(int width, int height)
 	if (dxgiFactory2 != nullptr)
 	{
 		// DirectX 11.1
-		DXGI_SWAP_CHAIN_DESC1 sd = {};
-		sd.Width = width;
-		sd.Height = height;
-		sd.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-		sd.SampleDesc.Count = 1;
-		sd.SampleDesc.Quality = 0;
-		sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-		sd.BufferCount = 2;
-		sd.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
+		DXGI_SWAP_CHAIN_DESC1 swapchain_desc = {};
+		swapchain_desc.Width = width;
+		swapchain_desc.Height = height;
+		swapchain_desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+		swapchain_desc.SampleDesc.Count = 1;
+		swapchain_desc.SampleDesc.Quality = 0;
+		swapchain_desc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+		swapchain_desc.BufferCount = 2;
+		swapchain_desc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
+		swapchain_desc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_TEARING;
 
 		// CreateSwapChainForHwnd is the prefered way of creating the swap chain
-		DX::Check(dxgiFactory2->CreateSwapChainForHwnd(m_d3dDevice.Get(), hwnd, &sd, nullptr, nullptr, &m_d3dSwapChain1));
+		DX::Check(dxgiFactory2->CreateSwapChainForHwnd(m_d3dDevice.Get(), hwnd, &swapchain_desc, nullptr, nullptr, &m_d3dSwapChain1));
 		DX::Check(m_d3dSwapChain1.As(&m_d3dSwapChain));
 	}
 	else
@@ -161,6 +162,7 @@ void DX::Renderer::CreateSwapChain(int width, int height)
 		swapchain_desc.SampleDesc.Quality = 0;
 		swapchain_desc.Windowed = TRUE;
 		swapchain_desc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
+		swapchain_desc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_TEARING;
 
 		// Creates the swapchain
 		DX::Check(dxgiFactory->CreateSwapChain(m_d3dDevice.Get(), &swapchain_desc, &m_d3dSwapChain));
