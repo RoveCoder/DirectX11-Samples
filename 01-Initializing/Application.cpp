@@ -63,7 +63,7 @@ bool Applicataion::SDLInit()
     }
 
     // Create SDL Window
-    auto window_flags = SDL_WINDOW_RESIZABLE | SDL_WINDOW_MAXIMIZED;
+    auto window_flags =  SDL_WINDOW_RESIZABLE | SDL_WINDOW_MAXIMIZED | SDL_WINDOW_ALLOW_HIGHDPI;
     m_SdlWindow = SDL_CreateWindow("DirectX - Initializing", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 800, 600, window_flags);
     if (m_SdlWindow == nullptr)
     {

@@ -1,7 +1,9 @@
 #include "DxRenderer.h"
 #include <SDL.h>
-#include <SDL_syswm.h>
 #include <DirectXColors.h>
+
+// Required for using SDL_SysWMinfo
+#include <SDL_syswm.h>
 
 HWND DX::GetHwnd(SDL_Window* window)
 {
@@ -150,19 +152,20 @@ void DX::Renderer::CreateSwapChain(int width, int height)
 	{
 		// Describe the swapchain
 		DXGI_SWAP_CHAIN_DESC swapchain_desc = {};
-		swapchain_desc.BufferCount = 2;
 		swapchain_desc.BufferDesc.Width = width;
 		swapchain_desc.BufferDesc.Height = height;
 		swapchain_desc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-		swapchain_desc.BufferDesc.RefreshRate.Numerator = 60;
-		swapchain_desc.BufferDesc.RefreshRate.Denominator = 1;
-		swapchain_desc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-		swapchain_desc.OutputWindow = hwnd;
 		swapchain_desc.SampleDesc.Count = 1;
 		swapchain_desc.SampleDesc.Quality = 0;
-		swapchain_desc.Windowed = TRUE;
+		swapchain_desc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+		swapchain_desc.BufferCount = 2;
 		swapchain_desc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
 		swapchain_desc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_TEARING;
+
+		swapchain_desc.BufferDesc.RefreshRate.Numerator = 60;
+		swapchain_desc.BufferDesc.RefreshRate.Denominator = 1;
+		swapchain_desc.OutputWindow = hwnd;
+		swapchain_desc.Windowed = TRUE;
 
 		// Creates the swapchain
 		DX::Check(dxgiFactory->CreateSwapChain(m_d3dDevice.Get(), &swapchain_desc, &m_d3dSwapChain));
