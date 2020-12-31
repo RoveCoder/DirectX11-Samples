@@ -30,6 +30,8 @@
 
 #include "SDL_config.h"
 
+#pragma warning(disable : 26819)
+
 #ifdef HAVE_SYS_TYPES_H
 #include <sys/types.h>
 #endif

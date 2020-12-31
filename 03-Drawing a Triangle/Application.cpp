@@ -18,6 +18,15 @@ int Applicataion::Execute()
     m_DxRenderer = std::make_unique<DX::Renderer>(m_SdlWindow);
     m_DxRenderer->Create();
 
+    // Initialise and create the DirectX 11 model
+    m_DxModel = std::make_unique<DX::Model>(m_DxRenderer.get());
+    m_DxModel->Create();
+
+    // Initialise and create the DirectX 11 shader
+    m_DxShader = std::make_unique<DX::Shader>(m_DxRenderer.get());
+    m_DxShader->LoadVertexShader("Shaders/VertexShader.cso");
+    m_DxShader->LoadPixelShader("Shaders/PixelShader.cso");
+
     // Starts the timer
     m_Timer.Start();
 
@@ -43,6 +52,12 @@ int Applicataion::Execute()
 
             // Clear the buffers
             m_DxRenderer->Clear();
+
+            // Bind the shader to the pipeline
+            m_DxShader->Use();
+
+            // Render the model
+            m_DxModel->Render();
 
             // Display the rendered scene
             m_DxRenderer->Present();
