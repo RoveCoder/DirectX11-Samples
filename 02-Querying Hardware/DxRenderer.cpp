@@ -255,7 +255,7 @@ void DX::Renderer::QueryHardware()
 		// Query the output displays for each graphic card
 		ComPtr<IDXGIOutput> output = nullptr;
 		auto output_index = 0;
-		while (adapter->EnumOutputs(output_index++, output.GetAddressOf()) != DXGI_ERROR_NOT_FOUND)
+		while (adapter->EnumOutputs(output_index++, output.ReleaseAndGetAddressOf()) != DXGI_ERROR_NOT_FOUND)
 		{
 			DXGI_OUTPUT_DESC desc;
 			output->GetDesc(&desc);
