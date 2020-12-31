@@ -34,7 +34,6 @@ void DX::Renderer::Create()
 void DX::Renderer::Resize(int width, int height)
 {
 	// Releases the current render target and depth stencil view
-	m_d3dRenderTarget.ReleaseAndGetAddressOf();
 	m_d3dDepthStencilView.ReleaseAndGetAddressOf();
 	m_d3dRenderTargetView.ReleaseAndGetAddressOf();
 
@@ -175,8 +174,9 @@ void DX::Renderer::CreateSwapChain(int width, int height)
 void DX::Renderer::CreateRenderTargetAndDepthStencilView(int width, int height)
 {
 	// Create the render target view
-	DX::Check(m_d3dSwapChain->GetBuffer(0, __uuidof(ID3D11Resource), reinterpret_cast<void**>(m_d3dRenderTarget.GetAddressOf())));
-	DX::Check(m_d3dDevice->CreateRenderTargetView(m_d3dRenderTarget.Get(), nullptr, m_d3dRenderTargetView.GetAddressOf()));
+	ComPtr<ID3D11Texture2D> back_buffer = nullptr;
+	DX::Check(m_d3dSwapChain->GetBuffer(0, __uuidof(ID3D11Resource), reinterpret_cast<void**>(back_buffer.GetAddressOf())));
+	DX::Check(m_d3dDevice->CreateRenderTargetView(back_buffer.Get(), nullptr, m_d3dRenderTargetView.GetAddressOf()));
 
 	// Describe the depth stencil view
 	D3D11_TEXTURE2D_DESC depth_desc = {};
@@ -202,13 +202,14 @@ void DX::Renderer::CreateRenderTargetAndDepthStencilView(int width, int height)
 void DX::Renderer::SetViewport(int width, int height)
 {
 	// Describe the viewport
-	m_d3dViewport.Width = static_cast<float>(width);
-	m_d3dViewport.Height = static_cast<float>(height);
-	m_d3dViewport.MinDepth = 0.0f;
-	m_d3dViewport.MaxDepth = 1.0f;
-	m_d3dViewport.TopLeftX = 0;
-	m_d3dViewport.TopLeftY = 0;
+	D3D11_VIEWPORT viewport = {};
+	viewport.Width = static_cast<float>(width);
+	viewport.Height = static_cast<float>(height);
+	viewport.MinDepth = 0.0f;
+	viewport.MaxDepth = 1.0f;
+	viewport.TopLeftX = 0;
+	viewport.TopLeftY = 0;
 
 	// Bind viewport to the pipline's rasterization stage
-	m_d3dDeviceContext->RSSetViewports(1, &m_d3dViewport);
+	m_d3dDeviceContext->RSSetViewports(1, &viewport);
 }

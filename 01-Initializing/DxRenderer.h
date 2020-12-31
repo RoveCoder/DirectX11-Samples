@@ -60,13 +60,11 @@ namespace DX
 		void CreateSwapChain(int width, int height);
 
 		// Render target and depth stencil view
-		ComPtr<ID3D11Texture2D> m_d3dRenderTarget = nullptr;
 		ComPtr<ID3D11RenderTargetView> m_d3dRenderTargetView = nullptr;
 		ComPtr<ID3D11DepthStencilView> m_d3dDepthStencilView = nullptr;
 		void CreateRenderTargetAndDepthStencilView(int width, int height);
 
 		// Viewport
-		D3D11_VIEWPORT m_d3dViewport = {};
 		void SetViewport(int width, int height);
 	};
 }
