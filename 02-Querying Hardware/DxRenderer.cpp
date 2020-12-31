@@ -253,6 +253,24 @@ void DX::Renderer::QueryHardware()
 		std::wcout << desc.Description << " - VRAM: " << videoMemoryMB << " MB" << '\n';
 		
 		// Query the output displays for each graphic card
+		ComPtr<IDXGIOutput> output = nullptr;
+		auto output_index = 0;
+		while (adapter->EnumOutputs(output_index++, output.GetAddressOf()) != DXGI_ERROR_NOT_FOUND)
+		{
+			DXGI_OUTPUT_DESC desc;
+			output->GetDesc(&desc);
 
+			auto display_modes_count = 0u;
+			DX::Check(output->GetDisplayModeList(DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_ENUM_MODES_INTERLACED, &display_modes_count, NULL));
+
+			std::vector<DXGI_MODE_DESC> display_modes(display_modes_count);
+			DX::Check(output->GetDisplayModeList(DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_ENUM_MODES_INTERLACED, &display_modes_count, display_modes.data()));
+
+			std::cout << "Number of modes: " << display_modes.size() << '\n';
+			for (auto& mode : display_modes)
+			{
+				std::cout << "Width: " << mode.Width << " - Height: " << mode.Height << " - Fresh Rate: " << (mode.RefreshRate.Numerator / mode.RefreshRate.Denominator) << '\n';
+			}
+		}
 	}
 }
