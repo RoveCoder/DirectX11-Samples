@@ -1,8 +1,6 @@
 #include "DxRenderer.h"
 #include <SDL.h>
 #include <DirectXColors.h>
-#include <vector>
-#include <iostream>
 
 // Required for using SDL_SysWMinfo
 #include <SDL_syswm.h>
@@ -31,9 +29,6 @@ void DX::Renderer::Create()
 	CreateSwapChain(window_width, window_height);
 	CreateRenderTargetAndDepthStencilView(window_width, window_height);
 	SetViewport(window_width, window_height);
-
-	// Query hardware
-	QueryHardware();
 }
 
 void DX::Renderer::Resize(int width, int height)
@@ -217,60 +212,4 @@ void DX::Renderer::SetViewport(int width, int height)
 
 	// Bind viewport to the pipline's rasterization stage
 	m_d3dDeviceContext->RSSetViewports(1, &viewport);
-}
-
-void DX::Renderer::QueryHardware()
-{
-	// Query the device until we get the DXGIFactory
-	ComPtr<IDXGIDevice> dxgiDevice = nullptr;
-	DX::Check(m_d3dDevice.As(&dxgiDevice));
-
-	ComPtr<IDXGIAdapter> deviceAdapter = nullptr;
-	DX::Check(dxgiDevice->GetAdapter(deviceAdapter.GetAddressOf()));
-
-	ComPtr<IDXGIFactory> dxgiFactory = nullptr;
-	DX::Check(deviceAdapter->GetParent(__uuidof(IDXGIFactory), reinterpret_cast<void**>(dxgiFactory.GetAddressOf())));
-
-	// Query the adapters
-	std::vector<ComPtr<IDXGIAdapter>> adapters;
-
-	auto adapter_index = 0;
-	ComPtr<IDXGIAdapter> tempAdapter = nullptr;
-	while (dxgiFactory->EnumAdapters(adapter_index++, tempAdapter.ReleaseAndGetAddressOf()) != DXGI_ERROR_NOT_FOUND)
-	{
-		adapters.push_back(tempAdapter);
-	}
-
-	// Display the number of graphic cards
-	std::cout << adapters.size() << " GPU(s)\n";
-	for (auto& adapter : adapters)
-	{
-		DXGI_ADAPTER_DESC desc;
-		adapter->GetDesc(&desc);
-
-		// Display graphic card name and VRAM
-		auto videoMemoryMB = (desc.DedicatedVideoMemory / 1024 / 1024);
-		std::wcout << desc.Description << " - VRAM: " << videoMemoryMB << " MB" << '\n';
-		
-		// Query the output displays for each graphic card
-		ComPtr<IDXGIOutput> output = nullptr;
-		auto output_index = 0;
-		while (adapter->EnumOutputs(output_index++, output.ReleaseAndGetAddressOf()) != DXGI_ERROR_NOT_FOUND)
-		{
-			DXGI_OUTPUT_DESC desc;
-			output->GetDesc(&desc);
-
-			auto display_modes_count = 0u;
-			DX::Check(output->GetDisplayModeList(DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_ENUM_MODES_INTERLACED, &display_modes_count, nullptr));
-
-			std::vector<DXGI_MODE_DESC> display_modes(display_modes_count);
-			DX::Check(output->GetDisplayModeList(DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_ENUM_MODES_INTERLACED, &display_modes_count, display_modes.data()));
-
-			std::cout << "Number of modes: " << display_modes.size() << '\n';
-			for (auto& mode : display_modes)
-			{
-				std::cout << "Width: " << mode.Width << " - Height: " << mode.Height << " - Fresh Rate: " << (mode.RefreshRate.Numerator / mode.RefreshRate.Denominator) << '\n';
-			}
-		}
-	}
 }

@@ -7,6 +7,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "01-Initializing", "01-Initi
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "02-Querying Hardware", "02-Querying Hardware\02-Querying Hardware.vcxproj", "{323D1793-597B-4358-9662-72668B30506D}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "03-Drawing a Triangle", "03-Drawing a Triangle\03-Drawing a Triangle.vcxproj", "{6135E7D0-8E96-4504-B863-95B10BC31AF6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -31,6 +33,14 @@ Global
 		{323D1793-597B-4358-9662-72668B30506D}.Release|x64.Build.0 = Release|x64
 		{323D1793-597B-4358-9662-72668B30506D}.Release|x86.ActiveCfg = Release|Win32
 		{323D1793-597B-4358-9662-72668B30506D}.Release|x86.Build.0 = Release|Win32
+		{6135E7D0-8E96-4504-B863-95B10BC31AF6}.Debug|x64.ActiveCfg = Debug|x64
+		{6135E7D0-8E96-4504-B863-95B10BC31AF6}.Debug|x64.Build.0 = Debug|x64
+		{6135E7D0-8E96-4504-B863-95B10BC31AF6}.Debug|x86.ActiveCfg = Debug|Win32
+		{6135E7D0-8E96-4504-B863-95B10BC31AF6}.Debug|x86.Build.0 = Debug|Win32
+		{6135E7D0-8E96-4504-B863-95B10BC31AF6}.Release|x64.ActiveCfg = Release|x64
+		{6135E7D0-8E96-4504-B863-95B10BC31AF6}.Release|x64.Build.0 = Release|x64
+		{6135E7D0-8E96-4504-B863-95B10BC31AF6}.Release|x86.ActiveCfg = Release|Win32
+		{6135E7D0-8E96-4504-B863-95B10BC31AF6}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
