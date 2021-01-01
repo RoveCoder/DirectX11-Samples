@@ -20,10 +20,15 @@ void DX::Model::CreateVertexBuffer()
 	// Set vertex data
 	std::vector<Vertex> vertices =
 	{
-		{ -0.5f, +0.5f, 0.0f }, // Top left vertex
-		{ +0.5f, +0.5f, 0.0f }, // Top right vertex
-		{ -0.5f, -0.5f, 0.0f }, // Bottom left vertex
-		{ +0.5f, -0.5f, 0.0f }, // Bottom right vertex
+		{ -1.0f, +1.0f, -1.0f }, // Front Top left vertex
+		{ +1.0f, +1.0f, -1.0f }, // Front Top right vertex
+		{ -1.0f, -1.0f, -1.0f }, // Front Bottom left vertex
+		{ +1.0f, -1.0f, -1.0f }, // Front Bottom right vertex
+
+		{ -1.0f, +1.0f, +1.0f }, // Back Top left vertex
+		{ +1.0f, +1.0f, +1.0f }, // Back Top right vertex
+		{ -1.0f, -1.0f, +1.0f }, // Back Bottom left vertex
+		{ +1.0f, -1.0f, +1.0f }, // Back Bottom right vertex
 	};
 
 	// Create index buffer
@@ -45,8 +50,29 @@ void DX::Model::CreateIndexBuffer()
 	// Set Indices
 	std::vector<UINT> indices =
 	{
-		0, 1, 2, // Triangle 1
-		2, 1, 3, // Triangle 2
+		// Front panel
+		0, 1, 2,
+		2, 1, 3,
+
+		// Right panel
+		1, 5, 3,
+		5, 7, 3,
+
+		// Back panel
+		4, 6, 5,
+		5, 6, 7,
+
+		// Left panel
+		0, 2, 4,
+		2, 6, 4,
+
+		// Top panel
+		0, 4, 5,
+		5, 1, 0,
+
+		// Bottom panel
+		2, 7, 6,
+		7, 2, 3
 	};
 
 	m_IndexCount = static_cast<UINT>(indices.size());
@@ -70,6 +96,11 @@ void DX::Model::CreateColourBuffer()
 	// Set Indices
 	m_Colours =
 	{
+		DirectX::Colors::Red,
+		DirectX::Colors::Blue,
+		DirectX::Colors::Green,
+		DirectX::Colors::Yellow,
+
 		DirectX::Colors::Red,
 		DirectX::Colors::Blue,
 		DirectX::Colors::Green,

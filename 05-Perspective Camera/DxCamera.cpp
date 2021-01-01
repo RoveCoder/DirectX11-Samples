@@ -5,7 +5,7 @@ DX::Camera::Camera(int width, int height)
 	Resize(width, height);
 
 	// Calculate camera's view
-	auto eye = DirectX::XMVectorSet(0.0f, 0.0f, -4.0f, 0.0f);
+	auto eye = DirectX::XMVectorSet(0.0f, 0.0f, -8.0f, 0.0f);
 	auto at = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 	auto up = DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 	m_View = DirectX::XMMatrixLookAtLH(eye, at, up);
