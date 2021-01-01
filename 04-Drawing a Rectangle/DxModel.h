@@ -2,6 +2,7 @@
 
 #include "DxRenderer.h"
 #include <vector>
+#include <DirectXColors.h>
 
 namespace DX
 {
@@ -35,8 +36,17 @@ namespace DX
 
 		// Vertex buffer
 		ComPtr<ID3D11Buffer> m_d3dVertexBuffer = nullptr;
+		void CreateVertexBuffer();
 
 		// Index buffer
 		ComPtr<ID3D11Buffer> m_d3dIndexBuffer = nullptr;
+		void CreateIndexBuffer();
+
+		// Vertex colours list
+		std::vector<DirectX::XMVECTORF32> m_Colours;
+
+		// Colour buffer
+		ComPtr<ID3D11Buffer> m_d3dColourBuffer = nullptr;
+		void CreateColourBuffer();
 	};
 }
