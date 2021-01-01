@@ -27,8 +27,8 @@ namespace DX
 	private:
 		DX::Renderer* m_DxRenderer = nullptr;
 
-		// Vertices list
-		std::vector<DX::Vertex> m_Vertices;
+		// Number of vertices to draw
+		UINT m_VertexCount = 0;
 
 		// Vertex buffer
 		ComPtr<ID3D11Buffer> m_d3dVertexBuffer = nullptr;

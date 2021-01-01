@@ -32,4 +32,5 @@ namespace DX
 		// Pixel shader
 		ComPtr<ID3D11PixelShader> m_d3dPixelShader = nullptr;
 	};
+
 }
