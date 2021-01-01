@@ -35,9 +35,6 @@ int Applicataion::Execute()
 
     m_DxCamera = std::make_unique<DX::Camera>(window_width, window_height);
 
-    // World translation
-    auto world = DirectX::XMMatrixIdentity();
-
     // Starts the timer
     m_Timer.Start();
 
@@ -58,7 +55,7 @@ int Applicataion::Execute()
 
                     // Update world constant buffer with new camera view and perspective
                     DX::WorldBuffer world_buffer = {};
-                    world_buffer.world = DirectX::XMMatrixTranspose(world);
+                    world_buffer.world = DirectX::XMMatrixTranspose(m_DxModel->World);
                     world_buffer.view = DirectX::XMMatrixTranspose(m_DxCamera->GetView());
                     world_buffer.projection = DirectX::XMMatrixTranspose(m_DxCamera->GetProjection());
                     m_DxShader->UpdateWorldConstantBuffer(world_buffer);
@@ -71,11 +68,11 @@ int Applicataion::Execute()
                     // Rotate the world 
                     auto pitch = e.motion.yrel * 0.01f;
                     auto yaw = e.motion.xrel * 0.01f;
-                    world *= DirectX::XMMatrixRotationRollPitchYaw(pitch, yaw, 0.0f);
+                    m_DxModel->World *= DirectX::XMMatrixRotationRollPitchYaw(pitch, yaw, 0.0f);
 
                     // Update world constant buffer with new camera view and perspective
                     DX::WorldBuffer world_buffer = {};
-                    world_buffer.world = DirectX::XMMatrixTranspose(world);
+                    world_buffer.world = DirectX::XMMatrixTranspose(m_DxModel->World);
                     world_buffer.view = DirectX::XMMatrixTranspose(m_DxCamera->GetView());
                     world_buffer.projection = DirectX::XMMatrixTranspose(m_DxCamera->GetProjection());
                     m_DxShader->UpdateWorldConstantBuffer(world_buffer);

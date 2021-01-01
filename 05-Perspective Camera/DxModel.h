@@ -25,6 +25,9 @@ namespace DX
 		// Render the model
 		void Render();
 
+		// World 
+		DirectX::XMMATRIX World = DirectX::XMMatrixIdentity();
+
 	private:
 		DX::Renderer* m_DxRenderer = nullptr;
 
