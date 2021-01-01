@@ -28,11 +28,8 @@ namespace DX
 	private:
 		DX::Renderer* m_DxRenderer = nullptr;
 
-		// Vertices list
-		std::vector<DX::Vertex> m_Vertices;
-
-		// Indeices list
-		std::vector<UINT> m_Indices;
+		// Number of indices to draw
+		UINT m_IndexCount = 0;
 
 		// Vertex buffer
 		ComPtr<ID3D11Buffer> m_d3dVertexBuffer = nullptr;

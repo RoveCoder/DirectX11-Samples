@@ -47,6 +47,6 @@ void DX::Model::Render()
 	d3dDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	// Render geometry
-	d3dDeviceContext->Draw(static_cast<UINT>(m_VertexCount), 0);
+	d3dDeviceContext->Draw(m_VertexCount, 0);
 }
  

@@ -18,7 +18,7 @@ void DX::Model::CreateVertexBuffer()
 	auto d3dDevice = m_DxRenderer->GetDevice();
 
 	// Set vertex data
-	m_Vertices =
+	std::vector<Vertex> vertices =
 	{
 		{ -0.5f, +0.5f, 0.0f }, // Top left vertex
 		{ +0.5f, +0.5f, 0.0f }, // Top right vertex
@@ -29,11 +29,11 @@ void DX::Model::CreateVertexBuffer()
 	// Create index buffer
 	D3D11_BUFFER_DESC vertex_buffer_desc = {};
 	vertex_buffer_desc.Usage = D3D11_USAGE_DEFAULT;
-	vertex_buffer_desc.ByteWidth = static_cast<UINT>(sizeof(Vertex) * m_Vertices.size());
+	vertex_buffer_desc.ByteWidth = static_cast<UINT>(sizeof(Vertex) * vertices.size());
 	vertex_buffer_desc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 
 	D3D11_SUBRESOURCE_DATA vertex_subdata = {};
-	vertex_subdata.pSysMem = m_Vertices.data();
+	vertex_subdata.pSysMem = vertices.data();
 
 	DX::Check(d3dDevice->CreateBuffer(&vertex_buffer_desc, &vertex_subdata, m_d3dVertexBuffer.ReleaseAndGetAddressOf()));
 }
@@ -43,20 +43,22 @@ void DX::Model::CreateIndexBuffer()
 	auto d3dDevice = m_DxRenderer->GetDevice();
 
 	// Set Indices
-	m_Indices =
+	std::vector<UINT> indices =
 	{
 		0, 1, 2, // Triangle 1
 		2, 1, 3, // Triangle 2
 	};
 
+	m_IndexCount = static_cast<UINT>(indices.size());
+
 	// Create index buffer
 	D3D11_BUFFER_DESC index_buffer_desc = {};
 	index_buffer_desc.Usage = D3D11_USAGE_DEFAULT;
-	index_buffer_desc.ByteWidth = static_cast<UINT>(sizeof(UINT) * m_Indices.size());
+	index_buffer_desc.ByteWidth = static_cast<UINT>(sizeof(UINT) * indices.size());
 	index_buffer_desc.BindFlags = D3D11_BIND_INDEX_BUFFER;
 
 	D3D11_SUBRESOURCE_DATA index_subdata = {};
-	index_subdata.pSysMem = m_Indices.data();
+	index_subdata.pSysMem = indices.data();
 
 	DX::Check(d3dDevice->CreateBuffer(&index_buffer_desc, &index_subdata, m_d3dIndexBuffer.ReleaseAndGetAddressOf()));
 }
@@ -111,6 +113,6 @@ void DX::Model::Render()
 	d3dDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	// Render geometry
-	d3dDeviceContext->DrawIndexed(static_cast<UINT>(m_Indices.size()), 0, 0);
+	d3dDeviceContext->DrawIndexed(m_IndexCount, 0, 0);
 }
  
