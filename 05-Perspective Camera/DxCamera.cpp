@@ -4,7 +4,9 @@
 DX::Camera::Camera(int width, int height)
 {
 	Resize(width, height);
-	Rotate(DirectX::XMConvertToRadians(30.0f), 0.0f);
+
+	constexpr auto pitch_radians = DirectX::XMConvertToRadians(30.0f);
+	Rotate(pitch_radians, 0.0f);
 }
 
 void DX::Camera::Resize(int width, int height)
