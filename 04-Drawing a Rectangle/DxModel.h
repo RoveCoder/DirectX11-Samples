@@ -6,11 +6,23 @@
 
 namespace DX
 {
+	struct Colour
+	{
+		float r = 0;
+		float g = 0;
+		float b = 0;
+		float a = 0;
+	};
+
 	struct Vertex
 	{
+		// Vertex position
 		float x = 0;
 		float y = 0;
 		float z = 0;
+
+		// Vertex colour
+		Colour colour = {};
 	};
 
 	class Model
@@ -38,12 +50,5 @@ namespace DX
 		// Index buffer
 		ComPtr<ID3D11Buffer> m_d3dIndexBuffer = nullptr;
 		void CreateIndexBuffer();
-
-		// Vertex colours list
-		std::vector<DirectX::XMVECTORF32> m_Colours;
-
-		// Colour buffer
-		ComPtr<ID3D11Buffer> m_d3dColourBuffer = nullptr;
-		void CreateColourBuffer();
 	};
 }

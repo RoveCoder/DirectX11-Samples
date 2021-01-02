@@ -79,7 +79,7 @@ bool Applicataion::SDLInit()
 
     // Create SDL Window
     auto window_flags = SDL_WINDOW_RESIZABLE | SDL_WINDOW_MAXIMIZED;
-    m_SdlWindow = SDL_CreateWindow("DirectX - Drawing a Triangle", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 800, 600, window_flags);
+    m_SdlWindow = SDL_CreateWindow("DirectX - Drawing a Rectangle", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 800, 600, window_flags);
     if (m_SdlWindow == nullptr)
     {
         std::string error = "SDL_CreateWindow failed: "; 
@@ -112,7 +112,7 @@ void Applicataion::CalculateFramesPerSecond()
         time = 0.0f;
         frameCount = 0;
 
-        auto title = "DirectX - Drawing a Triangle - FPS: " + std::to_string(fps) + " (" + std::to_string(1000.0f / fps) + " ms)";
+        auto title = "DirectX - Drawing a Rectangle - FPS: " + std::to_string(fps) + " (" + std::to_string(1000.0f / fps) + " ms)";
         SDL_SetWindowTitle(m_SdlWindow, title.c_str());
     }
 }
