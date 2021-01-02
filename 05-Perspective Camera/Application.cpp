@@ -68,7 +68,7 @@ int Applicataion::Execute()
                     // Rotate the world 
                     auto pitch = e.motion.yrel * 0.01f;
                     auto yaw = e.motion.xrel * 0.01f;
-                    m_DxModel->World *= DirectX::XMMatrixRotationRollPitchYaw(pitch, yaw, 0.0f);
+                    m_DxCamera->Rotate(pitch, yaw);
 
                     // Update world constant buffer with new camera view and perspective
                     DX::WorldBuffer world_buffer = {};
